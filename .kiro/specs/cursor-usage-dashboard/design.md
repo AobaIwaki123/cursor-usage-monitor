@@ -87,12 +87,12 @@ interface DashboardProps {
 ```
 
 ##### Visualization Components (Client Components)
-- **TokenUsageChart**: Time-series line chart with daily/hourly granularity toggle
-- **CostBreakdownChart**: Pie chart for cost by model with overall/individual model toggle
+- **TokenUsageChart**: Time-series line chart with daily/hourly/10-minute granularity toggle
+- **CostBreakdownChart**: Pie chart for cost by model
 - **ModelStatsTable**: Table showing model usage statistics with filtering
 - **SummaryCards**: Key metrics display with comprehensive statistics
-- **TimeGranularitySelector**: Toggle between daily and hourly views
-- **ModelViewToggle**: Switch between individual model and aggregated views
+- **TimeGranularitySelector**: Toggle between daily, hourly, and 10-minute views
+- **DateRangeSelector**: Preset options (Today, This Week, This Month, Last Month, Last 7 Days, Last 30 Days, All Time) and custom date picker
 
 #### 3. API Routes
 - **app/api/proxy/upload/route.ts**: Proxy to backend upload endpoint
@@ -181,7 +181,8 @@ pub struct ModelStats {
     pub total_tokens: u32,
     pub total_cost: f64,
     pub average_tokens_per_request: f64,
-    pub cache_efficiency: f64, // percentage
+    pub cache_hit_rate: f64, // percentage (0-100), calculated as cache_read / total_input * 100
+    pub cache_savings: f64, // monetary savings from cache usage
 }
 ```
 
@@ -324,9 +325,33 @@ cursor-usage-dashboard/
     └── types/
 ```
 
+## Accessibility and UX Considerations
+
+### Visual Design
+- Minimum font size: 14px for body text, 16px for labels
+- Contrast ratio: 4.5:1 for normal text, 3:1 for large text (WCAG AA)
+- Distinct chart colors with sufficient contrast
+- Clear visual hierarchy with appropriate spacing
+- Visible focus states for all interactive elements
+
+### Date Filtering
+- Global date range state managed at dashboard level
+- All visualization components receive and respect date filter
+- Date range displayed prominently in dashboard header
+- Preset options for quick selection (Today, This Week, This Month, Last Month, Last 7 Days, Last 30 Days, All Time)
+- Custom date picker for specific ranges
+- Filter persists across data uploads
+
+### Cache Efficiency Display
+- Calculate as: (cache_read_tokens / total_input_tokens) × 100
+- Cap at 100% maximum
+- Display with clear label: "Cache Hit Rate: X%"
+- Show monetary savings separately
+- Provide tooltip explanation of the metric
+
 ## Security Considerations
 
-- File upload size limits (10MB max)
+- File upload size limits (100MB max)
 - CSV content validation and sanitization
 - CORS configuration for development
 - No persistent data storage (memory only)

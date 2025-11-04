@@ -52,6 +52,20 @@
     - [x] モデル別の統計が適切に分類されているか
     - [x] キャッシュ効率が正しく計算されているか
   
+  - [ ] 2.6 Fix cache efficiency calculation and add date filtering support
+    - Update cache efficiency calculation to: (cache_read / total_input) × 100, capped at 100%
+    - Rename cache_efficiency field to cache_hit_rate in ModelStats struct
+    - Add cache_savings field to calculate monetary savings from cache usage
+    - Implement date range filtering in backend statistics endpoints
+    - Update comprehensive stats endpoint to accept date range parameters
+    - _Requirements: 5.5, 5.6, 7.4, 7.5, 10.1, 10.2, 10.5_
+    
+    **ユーザー確認ポイント:**
+    - [ ] キャッシュヒット率が100%を超えないか（`curl`でテスト）
+    - [ ] cache_hit_rateとcache_savingsフィールドが正しく返されるか
+    - [ ] 日付範囲パラメータでフィルタリングできるか
+    - [ ] フィルタリング後の統計が正確に計算されているか
+  
   - [x] 2.4 Implement comprehensive statistics calculation
     - Create services for peak usage analysis (hours, days)
     - Implement cost efficiency metrics calculation
@@ -178,7 +192,27 @@
     - [ ] パーセンタイル分布が正確に表示されるか
 
 - [ ] 5. Integrate components and implement enhanced dashboard layout
-  - [ ] 5.1 Create main Dashboard page with advanced state management
+  - [ ] 5.1 Implement global date filtering and improved UI accessibility
+    - Create DateRangeSelector component with preset options (Today, This Week, This Month, Last Month, Last 7 Days, Last 30 Days, All Time) and custom date picker
+    - Implement global date range state that applies to all visualization components
+    - Update TokenUsageChart to support 10-minute granularity in addition to daily and hourly
+    - Remove aggregated view toggle from all components (show individual model data only)
+    - Fix cache efficiency calculation to cap at 100% and display as "Cache Hit Rate: X%"
+    - Update all text to minimum 14px font size and ensure 4.5:1 contrast ratio for accessibility
+    - Display active date range prominently in dashboard header
+    - _Requirements: 2.2, 2.5, 2.6, 5.5, 5.6, 7.4, 7.5, 9.1, 9.2, 9.3, 9.4, 9.5, 10.1, 10.2, 10.3, 10.4, 10.5_
+    
+    **ユーザー確認ポイント:**
+    - [ ] プリセット期間選択（今日、今週、今月など）が正常に動作するか（ブラウザで確認）
+    - [ ] カスタム日付選択が機能するか
+    - [ ] 10分単位の粒度表示が正しく動作するか
+    - [ ] 日付フィルターが全てのチャート・統計に適用されるか
+    - [ ] Aggregated表示が削除されているか
+    - [ ] キャッシュ効率が100%を超えないか、表示が分かりやすいか
+    - [ ] フォントサイズとコントラストが改善されているか
+    - [ ] 選択中の期間がヘッダーに表示されるか
+  
+  - [ ] 5.2 Create main Dashboard page with advanced state management
     - Update app/page.tsx as main dashboard page
     - Implement responsive grid layout for all visualization components
     - Add client-side state management for uploaded data, filters, and view preferences
@@ -193,7 +227,7 @@
     - [ ] フィルター設定が全コンポーネントに反映されるか
     - [ ] ページリロード後も設定が保持されるか（localStorageの動作確認）
   
-  - [ ] 5.2 Implement enhanced file upload functionality
+  - [ ] 5.3 Implement enhanced file upload functionality
     - Add support for appending new CSV data to existing dataset
     - Implement option to replace or merge data on new upload
     - Add progress indicators for large file processing
@@ -205,7 +239,7 @@
     - [ ] 大容量ファイル処理時に進行状況が表示されるか
     - [ ] マージ後のデータが正しく統合されているか
   
-  - [ ] 5.3 Implement data persistence during development
+  - [ ] 5.4 Implement data persistence during development
     - Add Docker volume configuration for data persistence
     - Implement in-memory data storage with container restart handling
     - _Requirements: 4.5_
@@ -215,7 +249,7 @@
     - [ ] Docker volumeが正しく設定されているか（`docker compose config` で確認）
     - [ ] データの永続化が期待通りに動作するか
   
-  - [ ] 5.4 Add comprehensive error handling and loading states
+  - [ ] 5.5 Add comprehensive error handling and loading states
     - Implement Next.js error.tsx for global error boundary
     - Add loading.tsx for page-level loading states
     - Add loading spinners and progress indicators in client components
