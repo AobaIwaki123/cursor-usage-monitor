@@ -28,15 +28,16 @@ Cursor Usage Dashboardは、CursorのAPIやモデル使用状況を可視化す�
 
 ### Requirement 2
 
-**User Story:** As a Cursor user, I want to see my token usage over time, so that I can understand my usage patterns and trends.
+**User Story:** As a Cursor user, I want to see my token usage over time with multiple viewing perspectives, so that I can understand my usage patterns and trends at different granularities.
 
 #### Acceptance Criteria
 
 1. THE Dashboard_System SHALL display a time-series chart showing Total Tokens usage by date
-2. THE Dashboard_System SHALL display separate lines for Input tokens and Output tokens on the same chart
-3. WHEN hovering over data points, THE Dashboard_System SHALL show detailed information including exact token counts and timestamps
-4. THE Dashboard_System SHALL allow users to filter the time range using date selectors
-5. THE Dashboard_System SHALL automatically scale the chart axes based on the data range
+2. THE Dashboard_System SHALL provide toggle options to switch between daily and hourly time granularity views
+3. THE Dashboard_System SHALL display separate lines for Input tokens and Output tokens on the same chart
+4. WHEN hovering over data points, THE Dashboard_System SHALL show detailed information including exact token counts and timestamps
+5. THE Dashboard_System SHALL allow users to filter the time range using date selectors
+6. THE Dashboard_System SHALL automatically scale the chart axes based on the data range
 
 ### Requirement 3
 
@@ -64,12 +65,51 @@ Cursor Usage Dashboardは、CursorのAPIやモデル使用状況を可視化す�
 
 ### Requirement 5
 
-**User Story:** As a Cursor user, I want to see model usage statistics, so that I can understand which models I use most frequently.
+**User Story:** As a Cursor user, I want to see model usage statistics with filtering capabilities, so that I can understand which models I use most frequently and compare their performance.
 
 #### Acceptance Criteria
 
 1. THE Dashboard_System SHALL display usage frequency by model type in a bar chart
 2. THE Dashboard_System SHALL show token consumption breakdown by model
-3. THE Dashboard_System SHALL calculate and display efficiency metrics (tokens per request) by model
-4. THE Dashboard_System SHALL allow filtering and sorting of model statistics
-5. THE Dashboard_System SHALL highlight cache usage effectiveness for each model
+3. THE Dashboard_System SHALL provide toggle functionality to switch between individual model view and aggregated overall view
+4. THE Dashboard_System SHALL calculate and display efficiency metrics (tokens per request) by model
+5. THE Dashboard_System SHALL allow filtering and sorting of model statistics
+6. THE Dashboard_System SHALL highlight cache usage effectiveness for each model
+
+### Requirement 6
+
+**User Story:** As a Cursor user, I want to upload new CSV files and see updated visualizations, so that I can analyze my latest usage data without losing previous insights.
+
+#### Acceptance Criteria
+
+1. THE Dashboard_System SHALL accept new CSV_File uploads while preserving existing visualization state
+2. WHEN a new CSV_File is uploaded, THE Dashboard_System SHALL merge the new Usage_Data with existing data
+3. THE Dashboard_System SHALL update all Visualization_Components to reflect the combined dataset
+4. THE Dashboard_System SHALL maintain user-selected filters and view preferences after new data upload
+5. THE Dashboard_System SHALL provide option to replace existing data or append new data
+
+### Requirement 7
+
+**User Story:** As a Cursor user, I want to see comprehensive statistical insights, so that I can make informed decisions about my API usage and costs.
+
+#### Acceptance Criteria
+
+1. THE Dashboard_System SHALL calculate and display peak usage hours and days
+2. THE Dashboard_System SHALL show cost efficiency metrics (cost per token, cost per request)
+3. THE Dashboard_System SHALL calculate usage trends (growth rate, usage patterns)
+4. THE Dashboard_System SHALL display cache hit ratio and its impact on cost savings
+5. THE Dashboard_System SHALL provide model comparison statistics (performance, cost-effectiveness)
+6. THE Dashboard_System SHALL show usage distribution percentiles (median, 95th percentile usage)
+
+### Requirement 8
+
+**User Story:** As a developer, I want to ensure the Rust API performs efficiently under load, so that the dashboard remains responsive with large datasets.
+
+#### Acceptance Criteria
+
+1. THE Dashboard_System SHALL include performance benchmarks for CSV parsing operations
+2. THE Dashboard_System SHALL measure API response times for file upload endpoints under various file sizes
+3. THE Dashboard_System SHALL test memory usage efficiency when processing large CSV files (up to 100MB)
+4. THE Dashboard_System SHALL benchmark statistical calculation performance for datasets with 10,000+ records
+5. THE Dashboard_System SHALL include load testing for concurrent file upload scenarios
+6. THE Dashboard_System SHALL measure and report API throughput (requests per second) for all endpoints

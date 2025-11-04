@@ -2,7 +2,7 @@
 
 ## Overview
 
-Cursor Usage Dashboardは、CSVファイルからCursorのAPI使用データを読み込み、インタラクティブなダッシュボードで可視化するWebアプリケーションです。フロントエンドはReact + TypeScript、バックエンドはNode.js + Expressで構築し、全体をDockerで環境分離します。
+Cursor Usage Dashboardは、CSVファイルからCursorのAPI使用データを読み込み、インタラクティブなダッシュボードで可視化するWebアプリケーションです。フロントエンドはReact + TypeScript、バックエンドはRust + Axumで構築し、全体をDockerで環境分離します。
 
 ## Architecture
 
@@ -17,7 +17,7 @@ graph TB
         end
         
         subgraph "Backend Container"
-            C[Express API<br/>Port 3001]
+            C[Rust Axum API<br/>Port 3001]
             D[CSV Parser]
             E[Data Processing]
         end
@@ -43,10 +43,13 @@ graph TB
 - Axios (HTTP client)
 
 **Backend:**
-- Node.js + Express
-- Multer (file upload handling)
-- csv-parser (CSV processing)
-- CORS middleware
+- Rust + Axum (web framework)
+- Tokio (async runtime)
+- csv crate (CSV processing)
+- serde (serialization/deserialization)
+- tower-http (CORS middleware)
+- criterion (performance benchmarking)
+- tokio-test (async testing utilities)
 
 **Development Environment:**
 - Docker + Docker Compose
@@ -80,72 +83,129 @@ interface DashboardProps {
 ```
 
 #### 4. Visualization Components
-- **TokenUsageChart**: Time-series line chart for token usage
-- **CostBreakdownChart**: Pie chart for cost by model
-- **ModelStatsTable**: Table showing model usage statistics
-- **SummaryCards**: Key metrics display
+- **TokenUsageChart**: Time-series line chart with daily/hourly granularity toggle
+- **CostBreakdownChart**: Pie chart for cost by model with overall/individual model toggle
+- **ModelStatsTable**: Table showing model usage statistics with filtering
+- **SummaryCards**: Key metrics display with comprehensive statistics
+- **TimeGranularitySelector**: Toggle between daily and hourly views
+- **ModelViewToggle**: Switch between individual model and aggregated views
 
 ### Backend API Endpoints
 
 #### POST /api/upload
-```typescript
+```rust
 // Upload and parse CSV file
-Request: FormData with 'csvFile'
+Request: multipart/form-data with 'csvFile'
 Response: {
-  success: boolean;
-  data: UsageData[];
-  summary: UsageSummary;
+  success: bool,
+  data: Vec<UsageData>,
+  summary: UsageSummary,
+}
+```
+
+#### POST /api/upload/append
+```rust
+// Append new CSV data to existing dataset
+Request: multipart/form-data with 'csvFile'
+Response: {
+  success: bool,
+  data: Vec<UsageData>,
+  summary: UsageSummary,
+}
+```
+
+#### GET /api/stats/comprehensive
+```rust
+// Get comprehensive statistical insights
+Response: {
+  peak_usage: PeakUsageStats,
+  cost_efficiency: CostEfficiencyStats,
+  usage_trends: UsageTrendStats,
+  cache_performance: CacheStats,
+  model_comparison: Vec<ModelComparisonStats>,
 }
 ```
 
 #### GET /api/health
-```typescript
+```rust
 // Health check endpoint
-Response: { status: 'ok', timestamp: string }
+Response: { status: "ok", timestamp: String }
 ```
 
 ## Data Models
 
-### UsageData Interface
-```typescript
-interface UsageData {
-  date: string; // ISO 8601 format
-  kind: string; // "Included" etc.
-  model: string; // "auto" etc.
-  maxMode: boolean;
-  inputWithCache: number;
-  inputWithoutCache: number;
-  cacheRead: number;
-  outputTokens: number;
-  totalTokens: number;
-  cost: number;
+### UsageData Struct
+```rust
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UsageData {
+    pub date: String, // ISO 8601 format
+    pub kind: String, // "Included" etc.
+    pub model: String, // "auto" etc.
+    pub max_mode: bool,
+    pub input_with_cache: u32,
+    pub input_without_cache: u32,
+    pub cache_read: u32,
+    pub output_tokens: u32,
+    pub total_tokens: u32,
+    pub cost: f64,
 }
 ```
 
-### UsageSummary Interface
-```typescript
-interface UsageSummary {
-  totalCost: number;
-  totalTokens: number;
-  averageCostPerDay: number;
-  mostUsedModel: string;
-  dateRange: {
-    start: string;
-    end: string;
-  };
-  modelBreakdown: ModelStats[];
+### UsageSummary Struct
+```rust
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UsageSummary {
+    pub total_cost: f64,
+    pub total_tokens: u32,
+    pub average_cost_per_day: f64,
+    pub most_used_model: String,
+    pub date_range: DateRange,
+    pub model_breakdown: Vec<ModelStats>,
 }
 ```
 
-### ModelStats Interface
-```typescript
-interface ModelStats {
-  model: string;
-  totalRequests: number;
-  totalTokens: number;
-  totalCost: number;
-  averageTokensPerRequest: number;
-  cacheEfficiency: number; // percentage
+### ModelStats Struct
+```rust
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ModelStats {
+    pub model: String,
+    pub total_requests: u32,
+    pub total_tokens: u32,
+    pub total_cost: f64,
+    pub average_tokens_per_request: f64,
+    pub cache_efficiency: f64, // percentage
+}
+```
+
+### Comprehensive Statistics Structs
+```rust
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PeakUsageStats {
+    pub peak_hour: u8,
+    pub peak_day: String,
+    pub peak_tokens_per_hour: u32,
+    pub peak_cost_per_day: f64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CostEfficiencyStats {
+    pub cost_per_token: f64,
+    pub cost_per_request: f64,
+    pub cache_savings: f64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UsageTrendStats {
+    pub daily_growth_rate: f64,
+    pub usage_pattern: String, // "increasing", "stable", "decreasing"
+    pub usage_percentiles: UsagePercentiles,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UsagePercentiles {
+    pub median: u32,
+    pub p95: u32,
+    pub p99: u32,
 }
 ```
 
@@ -158,19 +218,23 @@ interface ModelStats {
 - File validation before upload
 
 ### Backend Error Handling
-- Express error middleware
-- CSV parsing error handling
+- Axum error handling middleware
+- CSV parsing error handling with detailed messages
 - File size and type validation
-- Structured error responses
+- Structured error responses using Result types
 
-```typescript
-interface ErrorResponse {
-  success: false;
-  error: {
-    code: string;
-    message: string;
-    details?: any;
-  };
+```rust
+#[derive(Debug, Serialize)]
+pub struct ErrorResponse {
+    pub success: bool,
+    pub error: ErrorDetails,
+}
+
+#[derive(Debug, Serialize)]
+pub struct ErrorDetails {
+    pub code: String,
+    pub message: String,
+    pub details: Option<serde_json::Value>,
 }
 ```
 
@@ -189,10 +253,13 @@ interface ErrorResponse {
 - E2E tests with Playwright
 
 ### Backend Testing
-- API endpoint tests with Jest + Supertest
-- CSV parsing unit tests
-- File upload integration tests
-- Error handling tests
+- API endpoint tests with Rust's built-in test framework
+- CSV parsing unit tests using tokio-test
+- File upload integration tests with axum-test
+- Error handling tests with comprehensive error scenarios
+- Performance benchmarks using criterion crate
+- Load testing with concurrent request scenarios
+- Memory usage profiling for large dataset processing
 
 ### Docker Testing
 - Container build verification
@@ -223,10 +290,11 @@ cursor-usage-dashboard/
 │       └── utils/
 ├── backend/
 │   ├── Dockerfile
-│   ├── package.json
+│   ├── Cargo.toml
 │   └── src/
-│       ├── routes/
-│       ├── middleware/
+│       ├── handlers/
+│       ├── models/
+│       ├── services/
 │       └── utils/
 └── shared/
     └── types/
