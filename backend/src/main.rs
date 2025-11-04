@@ -1,10 +1,12 @@
+mod handlers;
+mod models;
+mod services;
+mod utils;
+
 use axum::{
-    http::StatusCode,
-    response::Json,
-    routing::get,
+    routing::{get, post},
     Router,
 };
-use serde_json::{json, Value};
 use std::net::SocketAddr;
 use tower_http::cors::CorsLayer;
 
@@ -13,9 +15,12 @@ async fn main() {
     // Initialize tracing
     tracing_subscriber::fmt().init();
 
-    // Build our application with a route
+    // Build our application with routes
     let app = Router::new()
-        .route("/api/health", get(health_check))
+        .route("/api/health", get(handlers::health::health_check))
+        .route("/api/upload", post(handlers::upload::upload_csv))
+        .route("/api/upload/append", post(handlers::upload::append_csv))
+        .route("/api/stats/comprehensive", get(handlers::stats::comprehensive_stats))
         .layer(CorsLayer::permissive());
 
     // Run it
@@ -24,11 +29,4 @@ async fn main() {
     
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
-}
-
-async fn health_check() -> Result<Json<Value>, StatusCode> {
-    Ok(Json(json!({
-        "status": "ok",
-        "timestamp": chrono::Utc::now().to_rfc3339()
-    })))
 }

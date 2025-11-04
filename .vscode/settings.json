@@ -1,6 +1,8 @@
 {    
     "kiroAgent.trustedCommands": [
         "docker-compose build *",
+        "docker-compose up *",
+        "curl *",
         "docker-compose config"
     ]
 }

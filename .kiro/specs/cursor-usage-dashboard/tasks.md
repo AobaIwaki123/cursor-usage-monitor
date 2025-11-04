@@ -13,18 +13,18 @@
   - [x] フロントエンド (http://localhost:3000) とバックエンド (http://localhost:3001) にアクセス可能か
   - [x] ファイル変更時にホットリロードが動作するか
 
-- [ ] 2. Initialize Rust backend API server
-  - [ ] 2.1 Create Rust Axum server project
+- [-] 2. Initialize Rust backend API server
+  - [x] 2.1 Create Rust Axum server project
     - Initialize Cargo.toml with required dependencies (axum, tokio, serde, csv, tower-http)
     - Set up basic Axum server with CORS middleware
     - Create project structure with handlers, models, services, and utils modules
     - _Requirements: 4.1, 4.4_
     
     **ユーザー確認ポイント:**
-    - [ ] `cargo build` でエラーなくコンパイルできるか
-    - [ ] `cargo run` でサーバーが起動するか
-    - [ ] `GET /api/health` エンドポイントが応答するか
-    - [ ] CORS設定でフロントエンドからのリクエストが通るか
+    - [x] `cargo build` でエラーなくコンパイルできるか
+    - [x] `cargo run` でサーバーが起動するか
+    - [x] `GET /api/health` エンドポイントが応答するか
+    - [x] CORS設定でフロントエンドからのリクエストが通るか
   
   - [ ] 2.2 Implement CSV upload and parsing endpoints
     - Create POST /api/upload endpoint with multipart file handling
