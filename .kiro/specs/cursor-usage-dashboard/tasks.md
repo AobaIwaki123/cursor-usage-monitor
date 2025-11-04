@@ -39,7 +39,7 @@
     - [x] ファイルサイズ制限（100MB）が正しく動作するか
     - [x] `/api/upload/append` で既存データにマージできるか
   
-  - [ ] 2.3 Create data processing and summary calculation services
+  - [x] 2.3 Create data processing and summary calculation services
     - Implement UsageData struct and parsing logic
     - Calculate usage summary statistics (total cost, model breakdown, etc.)
     - Add model statistics calculation with cache efficiency
@@ -47,10 +47,10 @@
     - _Requirements: 2.1, 3.1, 3.4, 5.2, 5.3, 6.4_
     
     **ユーザー確認ポイント:**
-    - [ ] アップロード後に正確な統計サマリーが返されるか
-    - [ ] 総コスト、総トークン数が正しく計算されているか
-    - [ ] モデル別の統計が適切に分類されているか
-    - [ ] キャッシュ効率が正しく計算されているか
+    - [x] アップロード後に正確な統計サマリーが返されるか
+    - [x] 総コスト、総トークン数が正しく計算されているか
+    - [x] モデル別の統計が適切に分類されているか
+    - [x] キャッシュ効率が正しく計算されているか
   
   - [ ] 2.4 Implement comprehensive statistics calculation
     - Create services for peak usage analysis (hours, days)
