@@ -1,0 +1,5 @@
+{    
+    "kiroAgent.trustedCommands": [
+        "docker-compose build *"
+    ]
+}
