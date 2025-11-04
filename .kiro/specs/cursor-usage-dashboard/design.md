@@ -12,8 +12,8 @@ Cursor Usage Dashboardは、CSVファイルからCursorのAPI使用データを�
 graph TB
     subgraph "Docker Environment"
         subgraph "Frontend Container"
-            A[React App<br/>Port 3000]
-            B[Vite Dev Server]
+            A[Next.js App<br/>Port 3000]
+            B[Next.js Dev Server]
         end
         
         subgraph "Backend Container"
@@ -36,11 +36,11 @@ graph TB
 ### Technology Stack
 
 **Frontend:**
-- React 18 + TypeScript
-- Vite (development server with HMR)
+- Next.js 14 + TypeScript (App Router)
+- React Server Components
 - Recharts (data visualization)
 - Tailwind CSS (styling)
-- Axios (HTTP client)
+- Built-in fetch API (HTTP client)
 
 **Backend:**
 - Rust + Axum (web framework)
@@ -58,23 +58,26 @@ graph TB
 
 ## Components and Interfaces
 
-### Frontend Components
+### Frontend Components (Next.js App Router)
 
-#### 1. App Component
-- Main application container
-- Manages global state and routing
-- Handles file upload coordination
+#### 1. Page Components
+- **app/page.tsx**: Main dashboard page (Server Component)
+- **app/layout.tsx**: Root layout with global styles and metadata
 
-#### 2. FileUpload Component
+#### 2. Client Components
+
+##### FileUpload Component (Client Component)
 ```typescript
+'use client'
 interface FileUploadProps {
   onFileUpload: (data: UsageData[]) => void;
   isLoading: boolean;
 }
 ```
 
-#### 3. Dashboard Component
+##### Dashboard Component (Client Component)
 ```typescript
+'use client'
 interface DashboardProps {
   data: UsageData[];
   dateRange: DateRange;
@@ -82,13 +85,17 @@ interface DashboardProps {
 }
 ```
 
-#### 4. Visualization Components
+##### Visualization Components (Client Components)
 - **TokenUsageChart**: Time-series line chart with daily/hourly granularity toggle
 - **CostBreakdownChart**: Pie chart for cost by model with overall/individual model toggle
 - **ModelStatsTable**: Table showing model usage statistics with filtering
 - **SummaryCards**: Key metrics display with comprehensive statistics
 - **TimeGranularitySelector**: Toggle between daily and hourly views
 - **ModelViewToggle**: Switch between individual model and aggregated views
+
+#### 3. API Routes
+- **app/api/proxy/upload/route.ts**: Proxy to backend upload endpoint
+- **app/api/proxy/stats/route.ts**: Proxy to backend stats endpoint
 
 ### Backend API Endpoints
 
@@ -283,11 +290,15 @@ cursor-usage-dashboard/
 ├── frontend/
 │   ├── Dockerfile
 │   ├── package.json
-│   ├── vite.config.ts
-│   └── src/
+│   ├── next.config.js
+│   ├── tsconfig.json
+│   └── app/
+│       ├── layout.tsx
+│       ├── page.tsx
+│       ├── api/
+│       │   └── proxy/
 │       ├── components/
-│       ├── types/
-│       └── utils/
+│       └── types/
 ├── backend/
 │   ├── Dockerfile
 │   ├── Cargo.toml

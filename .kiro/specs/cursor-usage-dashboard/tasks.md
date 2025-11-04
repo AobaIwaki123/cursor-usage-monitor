@@ -80,11 +80,12 @@
     - [x] 大容量ファイル（100MB）のテストが成功するか
     - [x] 同時アップロードのテストが正常に動作するか
 
-- [ ] 3. Initialize frontend React application
-  - [ ] 3.1 Create React TypeScript project with Vite
-    - Initialize package.json with React, TypeScript, Vite, and Tailwind CSS
-    - Set up Vite configuration for development server
+- [ ] 3. Initialize frontend Next.js application
+  - [ ] 3.1 Create Next.js TypeScript project with App Router
+    - Initialize package.json with Next.js 14, TypeScript, and Tailwind CSS
+    - Set up next.config.js for development server and API proxy
     - Configure Tailwind CSS and basic styling setup
+    - Create app directory structure with layout.tsx and page.tsx
     - _Requirements: 4.4_
     
     **ユーザー確認ポイント:**
@@ -93,22 +94,24 @@
     - [ ] TypeScriptのコンパイルエラーがないか
     - [ ] Tailwind CSSのスタイルが適用されるか
   
-  - [ ] 3.2 Create shared TypeScript interfaces
-    - Define UsageData, UsageSummary, and ModelStats interfaces
+  - [ ] 3.2 Create shared TypeScript interfaces and API routes
+    - Define UsageData, UsageSummary, and ModelStats interfaces in app/types
     - Create API response types and error handling types
     - Set up type definitions for chart data structures
+    - Create Next.js API routes for proxying backend requests (app/api/proxy)
     - _Requirements: 1.4, 2.1, 3.1, 5.1_
     
     **ユーザー確認ポイント:**
     - [ ] TypeScript型定義がRustの構造体と一致しているか
     - [ ] APIレスポンスの型チェックが正常に動作するか
-    - [ ] インポート・エクスポートが正しく設定されているか
+    - [ ] Next.js API routesが正しく設定されているか
     - [ ] 型安全性が保たれているか（コンパイルエラーなし）
   
-  - [ ] 3.3 Implement file upload component
-    - Create FileUpload component with drag-and-drop functionality
+  - [ ] 3.3 Implement file upload client component
+    - Create FileUpload client component ('use client') with drag-and-drop functionality
     - Add file validation (CSV format, size limits)
     - Implement upload progress and error state handling
+    - Use Next.js API routes for file upload
     - _Requirements: 1.1, 1.2, 1.3_
     
     **ユーザー確認ポイント:**
@@ -117,10 +120,10 @@
     - [ ] CSV以外のファイルで適切なエラーが表示されるか
     - [ ] アップロード進行状況が表示されるか
 
-- [ ] 4. Implement data visualization components with enhanced features
+- [ ] 4. Implement data visualization client components with enhanced features
   - [ ] 4.1 Create token usage time-series chart with granularity controls
     - Install and configure Recharts library
-    - Implement TokenUsageChart component with line chart
+    - Implement TokenUsageChart client component ('use client') with line chart
     - Add daily/hourly granularity toggle functionality
     - Add hover tooltips with detailed token information
     - Implement date range filtering functionality
@@ -133,7 +136,7 @@
     - [ ] 日付範囲フィルターが正常に機能するか
   
   - [ ] 4.2 Create cost breakdown visualization with model filtering
-    - Implement CostBreakdownChart with pie chart for model costs
+    - Implement CostBreakdownChart client component ('use client') with pie chart for model costs
     - Add toggle between individual model view and aggregated overall view
     - Create daily cost trends line chart
     - Add cost summary cards with total and average calculations
@@ -146,7 +149,7 @@
     - [ ] コストサマリーカードに正確な数値が表示されるか
   
   - [ ] 4.3 Create model usage statistics display with advanced filtering
-    - Implement ModelStatsTable component with sorting and filtering
+    - Implement ModelStatsTable client component ('use client') with sorting and filtering
     - Add model usage frequency bar chart
     - Implement toggle between individual model and aggregated views
     - Calculate and display cache efficiency metrics
@@ -159,7 +162,7 @@
     - [ ] キャッシュ効率メトリクスが正確に表示されるか
   
   - [ ] 4.4 Create comprehensive statistics dashboard
-    - Implement peak usage hours and days visualization
+    - Implement client component ('use client') for peak usage hours and days visualization
     - Create cost efficiency metrics display (cost per token, per request)
     - Add usage trends visualization with growth rate indicators
     - Display cache performance and savings metrics
@@ -174,12 +177,13 @@
     - [ ] パーセンタイル分布が正確に表示されるか
 
 - [ ] 5. Integrate components and implement enhanced dashboard layout
-  - [ ] 5.1 Create main Dashboard component with advanced state management
+  - [ ] 5.1 Create main Dashboard page with advanced state management
+    - Update app/page.tsx as main dashboard page
     - Implement responsive grid layout for all visualization components
-    - Add state management for uploaded data, filters, and view preferences
+    - Add client-side state management for uploaded data, filters, and view preferences
     - Connect file upload with data visualization components
     - Implement data merging functionality for new CSV uploads
-    - Add view preference persistence (granularity, model filters)
+    - Add view preference persistence using localStorage
     - _Requirements: 1.4, 2.4, 6.4, 6.5_
     
     **ユーザー確認ポイント:**
@@ -211,8 +215,9 @@
     - [ ] データの永続化が期待通りに動作するか
   
   - [ ] 5.4 Add comprehensive error handling and loading states
-    - Implement global error boundary for React components
-    - Add loading spinners and progress indicators
+    - Implement Next.js error.tsx for global error boundary
+    - Add loading.tsx for page-level loading states
+    - Add loading spinners and progress indicators in client components
     - Create user-friendly error messages and validation feedback
     - _Requirements: 1.3_
     
@@ -223,8 +228,9 @@
     - [ ] ユーザーフレンドリーなエラー表示になっているか
 
 - [ ] 6. Finalize Docker configuration and comprehensive testing
-  - [ ] 6.1 Complete docker-compose configuration for Rust backend
-    - Ensure both frontend (React) and backend (Rust) containers build and run correctly
+  - [ ] 6.1 Complete docker-compose configuration for Next.js and Rust backend
+    - Ensure both frontend (Next.js) and backend (Rust) containers build and run correctly
+    - Configure Next.js container with proper build optimization
     - Configure Rust container with proper build optimization
     - Verify hot reload functionality works for both services
     - Test volume mounting and data persistence
@@ -232,6 +238,7 @@
     
     **ユーザー確認ポイント:**
     - [ ] `docker-compose up --build` で全サービスが正常に起動するか
+    - [ ] Next.jsコンテナのビルド時間が適切に最適化されているか
     - [ ] Rustコンテナのビルド時間が適切に最適化されているか
     - [ ] フロントエンド・バックエンド両方でホットリロードが動作するか
     - [ ] 本番用ビルド設定が正しく構成されているか
