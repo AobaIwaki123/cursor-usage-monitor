@@ -36,11 +36,12 @@ graph TB
 ### Technology Stack
 
 **Frontend:**
-- Next.js 14 + TypeScript (App Router)
+- Next.js 16 + TypeScript (App Router)
 - React Server Components
 - Recharts (data visualization)
-- Tailwind CSS (styling)
+- Tailwind CSS 4 (styling)
 - Built-in fetch API (HTTP client)
+- Bun (package manager and runtime)
 
 **Backend:**
 - Rust + Axum (web framework)
@@ -278,10 +279,22 @@ pub struct ErrorDetails {
 
 ### Local Development Setup
 1. Clone repository
-2. Run `docker-compose up --build`
+2. Run `docker compose up --build`
 3. Frontend available at http://localhost:3000
 4. Backend API at http://localhost:3001
 5. Hot reload enabled for both services
+
+### Running Commands in Docker
+All development commands should be executed inside Docker containers:
+- Frontend commands: `docker compose exec view <command>`
+- Backend commands: `docker compose exec api <command>`
+
+Examples:
+- Install frontend dependencies: `docker compose exec view bun install`
+- Run frontend dev server: `docker compose exec view bun run dev`
+- Build frontend: `docker compose exec view bun run build`
+- Run backend tests: `docker compose exec api cargo test`
+- Run backend benchmarks: `docker compose exec api cargo bench`
 
 ### File Structure
 ```

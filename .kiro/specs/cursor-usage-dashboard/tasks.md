@@ -9,9 +9,9 @@
   
   **ユーザー確認ポイント:**
   - [x] プロジェクトフォルダ構造が正しく作成されているか
-  - [x] `docker-compose up --build` でエラーなく起動するか
+  - [x] `docker compose up --build` でエラーなく起動するか
   - [x] フロントエンド (http://localhost:3000) とバックエンド (http://localhost:3001) にアクセス可能か
-  - [x] ファイル変更時にホットリロードが動作するか
+  - [x] ファイル変更時にホットリロードが動作するか（ファイルを編集して確認）
 
 - [-] 2. Initialize Rust backend API server
   - [x] 2.1 Create Rust Axum server project
@@ -21,9 +21,9 @@
     - _Requirements: 4.1, 4.4_
     
     **ユーザー確認ポイント:**
-    - [x] `cargo build` でエラーなくコンパイルできるか
-    - [x] `cargo run` でサーバーが起動するか
-    - [x] `GET /api/health` エンドポイントが応答するか
+    - [x] `docker compose exec api cargo build` でエラーなくコンパイルできるか
+    - [x] `docker compose up api` でサーバーが起動するか
+    - [x] `curl http://localhost:3001/api/health` で `GET /api/health` エンドポイントが応答するか
     - [x] CORS設定でフロントエンドからのリクエストが通るか
   
   - [x] 2.2 Implement CSV upload and parsing endpoints
@@ -34,7 +34,7 @@
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 6.1, 6.2, 6.3_
     
     **ユーザー確認ポイント:**
-    - [x] example.csvファイルが正常にアップロード・解析されるか
+    - [x] example.csvファイルが正常にアップロード・解析されるか（`curl`または`docker compose exec api`内でテスト）
     - [x] 無効なCSVファイルで適切なエラーメッセージが返されるか
     - [x] ファイルサイズ制限（100MB）が正しく動作するか
     - [x] `/api/upload/append` で既存データにマージできるか
@@ -60,7 +60,7 @@
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
     
     **ユーザー確認ポイント:**
-    - [x] `/api/stats/comprehensive` エンドポイントが正常に応答するか
+    - [x] `curl http://localhost:3001/api/stats/comprehensive` で `/api/stats/comprehensive` エンドポイントが正常に応答するか
     - [x] ピーク使用時間・日付が正しく特定されているか
     - [x] コスト効率メトリクス（トークンあたりコスト等）が計算されているか
     - [x] 使用量のパーセンタイル（中央値、95%等）が算出されているか
@@ -75,24 +75,25 @@
     - _Requirements: 1.3, 8.1, 8.2, 8.3, 8.4, 8.5, 8.6_
     
     **ユーザー確認ポイント:**
-    - [x] `cargo test` で全テストがパスするか
-    - [x] `cargo bench` でベンチマークが実行されるか
+    - [x] `docker compose exec api cargo test` で全テストがパスするか
+    - [x] `docker compose exec api cargo bench` でベンチマークが実行されるか
     - [x] 大容量ファイル（100MB）のテストが成功するか
     - [x] 同時アップロードのテストが正常に動作するか
 
-- [ ] 3. Initialize frontend Next.js application
-  - [ ] 3.1 Create Next.js TypeScript project with App Router
-    - Initialize package.json with Next.js 14, TypeScript, and Tailwind CSS
-    - Set up next.config.js for development server and API proxy
-    - Configure Tailwind CSS and basic styling setup
+- [-] 3. Initialize frontend Next.js application
+  - [x] 3.1 Create Next.js TypeScript project with App Router
+    - Initialize package.json with Next.js 16, TypeScript, and Tailwind CSS 4
+    - Set up next.config.ts for development server and API proxy
+    - Configure Tailwind CSS 4 and basic styling setup
     - Create app directory structure with layout.tsx and page.tsx
+    - Configure Bun as package manager
     - _Requirements: 4.4_
     
     **ユーザー確認ポイント:**
-    - [ ] `npm install` でエラーなく依存関係がインストールされるか
-    - [ ] `npm run dev` で開発サーバーが起動するか
-    - [ ] TypeScriptのコンパイルエラーがないか
-    - [ ] Tailwind CSSのスタイルが適用されるか
+    - [x] `docker compose exec view bun install` でエラーなく依存関係がインストールされるか
+    - [x] `docker compose exec view bun run dev` で開発サーバーが起動するか
+    - [x] TypeScriptのコンパイルエラーがないか
+    - [x] Tailwind CSSのスタイルが適用されるか
   
   - [ ] 3.2 Create shared TypeScript interfaces and API routes
     - Define UsageData, UsageSummary, and ModelStats interfaces in app/types
@@ -103,7 +104,7 @@
     
     **ユーザー確認ポイント:**
     - [ ] TypeScript型定義がRustの構造体と一致しているか
-    - [ ] APIレスポンスの型チェックが正常に動作するか
+    - [ ] APIレスポンスの型チェックが正常に動作するか（`docker compose exec view bun run build`でエラーなし）
     - [ ] Next.js API routesが正しく設定されているか
     - [ ] 型安全性が保たれているか（コンパイルエラーなし）
   
@@ -115,14 +116,14 @@
     - _Requirements: 1.1, 1.2, 1.3_
     
     **ユーザー確認ポイント:**
-    - [ ] ドラッグ&ドロップでファイルアップロードできるか
+    - [ ] ドラッグ&ドロップでファイルアップロードできるか（ブラウザで http://localhost:3000 にアクセスして確認）
     - [ ] ファイル選択ボタンが正常に動作するか
     - [ ] CSV以外のファイルで適切なエラーが表示されるか
     - [ ] アップロード進行状況が表示されるか
 
 - [ ] 4. Implement data visualization client components with enhanced features
   - [ ] 4.1 Create token usage time-series chart with granularity controls
-    - Install and configure Recharts library
+    - Install and configure Recharts library (`docker compose exec view bun add recharts`)
     - Implement TokenUsageChart client component ('use client') with line chart
     - Add daily/hourly granularity toggle functionality
     - Add hover tooltips with detailed token information
@@ -130,7 +131,7 @@
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
     
     **ユーザー確認ポイント:**
-    - [ ] 時系列チャートが正しく描画されるか
+    - [ ] 時系列チャートが正しく描画されるか（ブラウザで確認）
     - [ ] 日毎・時間ごとの切り替えが動作するか
     - [ ] ホバー時に詳細情報が表示されるか
     - [ ] 日付範囲フィルターが正常に機能するか
@@ -143,7 +144,7 @@
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
     
     **ユーザー確認ポイント:**
-    - [ ] モデル別コスト内訳の円グラフが表示されるか
+    - [ ] モデル別コスト内訳の円グラフが表示されるか（ブラウザで確認）
     - [ ] 個別モデル・全体表示の切り替えが動作するか
     - [ ] 日別コストトレンドが正しく描画されるか
     - [ ] コストサマリーカードに正確な数値が表示されるか
@@ -156,7 +157,7 @@
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
     
     **ユーザー確認ポイント:**
-    - [ ] モデル統計テーブルのソート・フィルター機能が動作するか
+    - [ ] モデル統計テーブルのソート・フィルター機能が動作するか（ブラウザで確認）
     - [ ] モデル使用頻度の棒グラフが表示されるか
     - [ ] 個別・集約表示の切り替えが正常に機能するか
     - [ ] キャッシュ効率メトリクスが正確に表示されるか
@@ -171,7 +172,7 @@
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
     
     **ユーザー確認ポイント:**
-    - [ ] ピーク使用時間・日付が視覚的に表示されるか
+    - [ ] ピーク使用時間・日付が視覚的に表示されるか（ブラウザで確認）
     - [ ] コスト効率メトリクス（トークンあたりコスト等）が表示されるか
     - [ ] 使用傾向と成長率が適切に可視化されるか
     - [ ] パーセンタイル分布が正確に表示されるか
@@ -187,10 +188,10 @@
     - _Requirements: 1.4, 2.4, 6.4, 6.5_
     
     **ユーザー確認ポイント:**
-    - [ ] レスポンシブレイアウトが異なる画面サイズで正常に表示されるか
+    - [ ] レスポンシブレイアウトが異なる画面サイズで正常に表示されるか（ブラウザで確認）
     - [ ] ファイルアップロード後に全ての可視化コンポーネントが更新されるか
     - [ ] フィルター設定が全コンポーネントに反映されるか
-    - [ ] ページリロード後も設定が保持されるか
+    - [ ] ページリロード後も設定が保持されるか（localStorageの動作確認）
   
   - [ ] 5.2 Implement enhanced file upload functionality
     - Add support for appending new CSV data to existing dataset
@@ -199,7 +200,7 @@
     - _Requirements: 6.1, 6.2, 6.3_
     
     **ユーザー確認ポイント:**
-    - [ ] 新しいCSVファイルを既存データに追加できるか
+    - [ ] 新しいCSVファイルを既存データに追加できるか（ブラウザで確認）
     - [ ] データ置換・マージの選択オプションが動作するか
     - [ ] 大容量ファイル処理時に進行状況が表示されるか
     - [ ] マージ後のデータが正しく統合されているか
@@ -210,8 +211,8 @@
     - _Requirements: 4.5_
     
     **ユーザー確認ポイント:**
-    - [ ] コンテナ再起動後もアップロードしたデータが保持されるか
-    - [ ] Docker volumeが正しく設定されているか
+    - [ ] コンテナ再起動後もアップロードしたデータが保持されるか（`docker compose restart` で確認）
+    - [ ] Docker volumeが正しく設定されているか（`docker compose config` で確認）
     - [ ] データの永続化が期待通りに動作するか
   
   - [ ] 5.4 Add comprehensive error handling and loading states
@@ -222,14 +223,14 @@
     - _Requirements: 1.3_
     
     **ユーザー確認ポイント:**
-    - [ ] エラー発生時に適切なエラーメッセージが表示されるか
+    - [ ] エラー発生時に適切なエラーメッセージが表示されるか（ブラウザで確認）
     - [ ] ローディング状態が視覚的に分かりやすく表示されるか
-    - [ ] ネットワークエラー時の処理が適切に動作するか
+    - [ ] ネットワークエラー時の処理が適切に動作するか（バックエンドを停止して確認）
     - [ ] ユーザーフレンドリーなエラー表示になっているか
 
 - [ ] 6. Finalize Docker configuration and comprehensive testing
   - [ ] 6.1 Complete docker-compose configuration for Next.js and Rust backend
-    - Ensure both frontend (Next.js) and backend (Rust) containers build and run correctly
+    - Ensure both frontend (Next.js with Bun) and backend (Rust) containers build and run correctly
     - Configure Next.js container with proper build optimization
     - Configure Rust container with proper build optimization
     - Verify hot reload functionality works for both services
@@ -237,27 +238,28 @@
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
     
     **ユーザー確認ポイント:**
-    - [ ] `docker-compose up --build` で全サービスが正常に起動するか
-    - [ ] Next.jsコンテナのビルド時間が適切に最適化されているか
-    - [ ] Rustコンテナのビルド時間が適切に最適化されているか
-    - [ ] フロントエンド・バックエンド両方でホットリロードが動作するか
+    - [ ] `docker compose up --build` で全サービスが正常に起動するか
+    - [ ] Next.jsコンテナのビルド時間が適切に最適化されているか（`docker compose exec view bun run build`で確認）
+    - [ ] Rustコンテナのビルド時間が適切に最適化されているか（`docker compose exec api cargo build --release`で確認）
+    - [ ] フロントエンド・バックエンド両方でホットリロードが動作するか（ファイル編集して確認）
     - [ ] 本番用ビルド設定が正しく構成されているか
   
   - [ ] 6.2 Create comprehensive development documentation
-    - Write README with setup and usage instructions
+    - Write README with setup and usage instructions (including Bun and Docker commands)
     - Document all API endpoints and data formats
     - Add performance benchmarking results and guidelines
-    - Add troubleshooting guide for common Docker and Rust issues
+    - Add troubleshooting guide for common Docker, Bun, and Rust issues
+    - Include all `docker compose exec` command examples
     - _Requirements: 4.3_
     
     **ユーザー確認ポイント:**
-    - [ ] READMEの手順に従って新規環境でセットアップできるか
+    - [ ] READMEの手順に従って新規環境でセットアップできるか（`docker compose up --build`から開始）
     - [ ] API仕様書が実装と一致しているか
-    - [ ] パフォーマンスベンチマーク結果が記載されているか
+    - [ ] パフォーマンスベンチマーク結果が記載されているか（`docker compose exec api cargo bench`の結果）
     - [ ] トラブルシューティングガイドが実用的か
   
   - [ ] 6.3 Add end-to-end testing and performance validation
-    - Configure Playwright for E2E testing
+    - Configure Playwright for E2E testing (`docker compose exec view bun add -d @playwright/test`)
     - Write tests for complete user workflow (upload → visualize → filter)
     - Test Docker environment functionality
     - Validate performance benchmarks meet requirements
@@ -265,10 +267,10 @@
     - _Requirements: 1.1, 2.1, 3.1, 8.1, 8.2, 8.3_
     
     **ユーザー確認ポイント:**
-    - [ ] E2Eテストが全て成功するか
-    - [ ] ユーザーワークフロー全体が正常に動作するか
+    - [ ] E2Eテストが全て成功するか（`docker compose exec view bun run test:e2e`で確認）
+    - [ ] ユーザーワークフロー全体が正常に動作するか（ブラウザで手動確認）
     - [ ] 100MBファイルのアップロードテストが成功するか
-    - [ ] パフォーマンス要件（応答時間、スループット）を満たしているか
+    - [ ] パフォーマンス要件（応答時間、スループット）を満たしているか（`docker compose exec api cargo bench`で確認）
   
   - [ ] 6.4 Performance optimization and monitoring
     - Implement API response time monitoring
@@ -278,7 +280,7 @@
     - _Requirements: 8.4, 8.5, 8.6_
     
     **ユーザー確認ポイント:**
-    - [ ] API応答時間が要件を満たしているか（目標値以下）
-    - [ ] 大容量ファイル処理時のメモリ使用量が適切か
-    - [ ] 同時リクエスト処理が正常に動作するか
+    - [ ] API応答時間が要件を満たしているか（`docker compose exec api cargo bench`で確認）
+    - [ ] 大容量ファイル処理時のメモリ使用量が適切か（`docker stats`で確認）
+    - [ ] 同時リクエスト処理が正常に動作するか（負荷テストツールで確認）
     - [ ] パフォーマンス監視ダッシュボードが機能するか
