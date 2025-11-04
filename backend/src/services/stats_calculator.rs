@@ -213,3 +213,164 @@ impl StatsCalculator {
         }
     }
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::models::usage_data::UsageData;
+
+    fn create_test_data() -> Vec<UsageData> {
+        vec![
+            UsageData {
+                date: "2024-01-01T10:00:00Z".to_string(),
+                kind: "Included".to_string(),
+                model: "auto".to_string(),
+                max_mode: false,
+                input_with_cache: 100,
+                input_without_cache: 50,
+                cache_read: 25,
+                output_tokens: 75,
+                total_tokens: 250,
+                cost: 0.05,
+            },
+            UsageData {
+                date: "2024-01-01T14:00:00Z".to_string(),
+                kind: "Included".to_string(),
+                model: "gpt-4".to_string(),
+                max_mode: true,
+                input_with_cache: 200,
+                input_without_cache: 100,
+                cache_read: 50,
+                output_tokens: 150,
+                total_tokens: 500,
+                cost: 0.15,
+            },
+            UsageData {
+                date: "2024-01-02T10:00:00Z".to_string(),
+                kind: "Included".to_string(),
+                model: "auto".to_string(),
+                max_mode: false,
+                input_with_cache: 150,
+                input_without_cache: 75,
+                cache_read: 30,
+                output_tokens: 95,
+                total_tokens: 350,
+                cost: 0.08,
+            },
+        ]
+    }
+
+    #[test]
+    fn test_calculate_peak_usage() {
+        let calculator = StatsCalculator::new();
+        let data = create_test_data();
+        
+        let peak_stats = calculator.calculate_peak_usage(&data);
+        
+        // Peak hour should be 10 (two entries at 10:00)
+        assert_eq!(peak_stats.peak_hour, 10);
+        assert_eq!(peak_stats.peak_tokens_per_hour, 600); // 250 + 350
+        
+        // Peak day should be 2024-01-01 (higher cost)
+        assert_eq!(peak_stats.peak_day, "2024-01-01");
+        assert_eq!(peak_stats.peak_cost_per_day, 0.20); // 0.05 + 0.15
+    }
+
+    #[test]
+    fn test_calculate_peak_usage_empty_data() {
+        let calculator = StatsCalculator::new();
+        let data = vec![];
+        
+        let peak_stats = calculator.calculate_peak_usage(&data);
+        
+        assert_eq!(peak_stats.peak_hour, 0);
+        assert_eq!(peak_stats.peak_tokens_per_hour, 0);
+        assert_eq!(peak_stats.peak_day, "");
+        assert_eq!(peak_stats.peak_cost_per_day, 0.0);
+    }
+
+    #[test]
+    fn test_calculate_cost_efficiency() {
+        let calculator = StatsCalculator::new();
+        let data = create_test_data();
+        
+        let cost_efficiency = calculator.calculate_cost_efficiency(&data);
+        
+        // Total cost: 0.05 + 0.15 + 0.08 = 0.28
+        // Total tokens: 250 + 500 + 350 = 1100
+        // Total requests: 3
+        assert!((cost_efficiency.cost_per_token - 0.28 / 1100.0).abs() < 0.0001);
+        assert!((cost_efficiency.cost_per_request - 0.28 / 3.0).abs() < 0.0001);
+        
+        // Cache savings: total_cache_read / (total_input_without_cache + total_cache_read) * 100
+        // (25 + 50 + 30) / (50 + 100 + 75 + 25 + 50 + 30) * 100 = 105 / 330 * 100 ≈ 31.82%
+        assert!((cost_efficiency.cache_savings - 31.818181818181817).abs() < 0.0001);
+    }
+
+    #[test]
+    fn test_calculate_cost_efficiency_empty_data() {
+        let calculator = StatsCalculator::new();
+        let data = vec![];
+        
+        let cost_efficiency = calculator.calculate_cost_efficiency(&data);
+        
+        assert_eq!(cost_efficiency.cost_per_token, 0.0);
+        assert_eq!(cost_efficiency.cost_per_request, 0.0);
+        assert_eq!(cost_efficiency.cache_savings, 0.0);
+    }
+
+    #[test]
+    fn test_calculate_usage_trends() {
+        let calculator = StatsCalculator::new();
+        let data = create_test_data();
+        
+        let usage_trends = calculator.calculate_usage_trends(&data);
+        
+        // Growth rate from day 1 (600 tokens) to day 2 (350 tokens) should be negative
+        assert!(usage_trends.daily_growth_rate < 0.0);
+        assert_eq!(usage_trends.usage_pattern, "decreasing");
+        
+        // Check percentiles
+        let mut sorted_tokens = vec![250, 350, 500];
+        sorted_tokens.sort();
+        assert_eq!(usage_trends.usage_percentiles.median, 350);
+        assert_eq!(usage_trends.usage_percentiles.p95, 500);
+        assert_eq!(usage_trends.usage_percentiles.p99, 500);
+    }
+
+    #[test]
+    fn test_calculate_percentiles() {
+        let calculator = StatsCalculator::new();
+        let data = create_test_data();
+        
+        let percentiles = calculator.calculate_percentiles(&data);
+        
+        assert_eq!(percentiles.median, 350);
+        assert_eq!(percentiles.p95, 500);
+        assert_eq!(percentiles.p99, 500);
+    }
+
+    #[test]
+    fn test_calculate_percentiles_empty_data() {
+        let calculator = StatsCalculator::new();
+        let data = vec![];
+        
+        let percentiles = calculator.calculate_percentiles(&data);
+        
+        assert_eq!(percentiles.median, 0);
+        assert_eq!(percentiles.p95, 0);
+        assert_eq!(percentiles.p99, 0);
+    }
+
+    #[test]
+    fn test_calculate_comprehensive_stats() {
+        let calculator = StatsCalculator::new();
+        let data = create_test_data();
+        
+        let comprehensive_stats = calculator.calculate_comprehensive_stats(&data);
+        
+        // Verify all components are calculated
+        assert_eq!(comprehensive_stats.peak_usage.peak_hour, 10);
+        assert!(comprehensive_stats.cost_efficiency.cost_per_token > 0.0);
+        assert!(comprehensive_stats.usage_trends.daily_growth_rate < 0.0);
+    }
+}

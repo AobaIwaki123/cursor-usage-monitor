@@ -3,6 +3,10 @@ name = "cursor-usage-dashboard-backend"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "cursor_usage_dashboard_backend"
+path = "src/lib.rs"
+
 [dependencies]
 axum = { version = "0.7", features = ["multipart"] }
 tokio = { version = "1.0", features = ["full"] }
@@ -16,3 +20,21 @@ tracing-subscriber = "0.3"
 chrono = { version = "0.4", features = ["serde"] }
 bytes = "1.0"
 lazy_static = "1.4"
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+tokio-test = "0.4"
+axum-test = "14.0"
+tempfile = "3.8"
+
+[[bench]]
+name = "csv_parsing"
+harness = false
+
+[[bench]]
+name = "stats_calculation"
+harness = false
+
+[[bench]]
+name = "api_endpoints"
+harness = false

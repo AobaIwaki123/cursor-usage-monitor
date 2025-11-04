@@ -153,3 +153,136 @@ impl CsvParser {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn create_valid_csv() -> String {
+        "Date,Kind,Model,Max Mode,Input (w/ Cache Write),Input (w/o Cache Write),Cache Read,Output Tokens,Total Tokens,Cost\n\
+         2024-01-01T10:00:00Z,Included,auto,No,100,50,25,75,250,0.05\n\
+         2024-01-01T11:00:00Z,Included,gpt-4,Yes,200,100,50,150,500,0.15".to_string()
+    }
+
+    fn create_invalid_header_csv() -> String {
+        "Date,Kind,Model,Invalid Header,Input (w/ Cache Write),Input (w/o Cache Write),Cache Read,Output Tokens,Total Tokens,Cost\n\
+         2024-01-01T10:00:00Z,Included,auto,No,100,50,25,75,250,0.05".to_string()
+    }
+
+    #[test]
+    fn test_parse_valid_csv() {
+        let parser = CsvParser::new();
+        let csv_content = create_valid_csv();
+        
+        let result = parser.parse_csv(&csv_content);
+        assert!(result.is_ok());
+        
+        let data = result.unwrap();
+        assert_eq!(data.len(), 2);
+        
+        // Check first record
+        assert_eq!(data[0].date, "2024-01-01T10:00:00Z");
+        assert_eq!(data[0].kind, "Included");
+        assert_eq!(data[0].model, "auto");
+        assert_eq!(data[0].max_mode, false);
+        assert_eq!(data[0].input_with_cache, 100);
+        assert_eq!(data[0].input_without_cache, 50);
+        assert_eq!(data[0].cache_read, 25);
+        assert_eq!(data[0].output_tokens, 75);
+        assert_eq!(data[0].total_tokens, 250);
+        assert_eq!(data[0].cost, 0.05);
+    }
+
+    #[test]
+    fn test_parse_empty_csv() {
+        let parser = CsvParser::new();
+        let result = parser.parse_csv("");
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("CSV file is empty"));
+    }
+
+    #[test]
+    fn test_parse_invalid_headers() {
+        let parser = CsvParser::new();
+        let csv_content = create_invalid_header_csv();
+        
+        let result = parser.parse_csv(&csv_content);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("Invalid header at column 4"));
+    }
+
+    #[test]
+    fn test_parse_invalid_token_calculation() {
+        let parser = CsvParser::new();
+        let csv_content = "Date,Kind,Model,Max Mode,Input (w/ Cache Write),Input (w/o Cache Write),Cache Read,Output Tokens,Total Tokens,Cost\n\
+                          2024-01-01T10:00:00Z,Included,auto,No,100,50,25,75,300,0.05";
+        
+        let result = parser.parse_csv(&csv_content);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("Token calculation mismatch"));
+    }
+
+    #[test]
+    fn test_parse_invalid_number_format() {
+        let parser = CsvParser::new();
+        let csv_content = "Date,Kind,Model,Max Mode,Input (w/ Cache Write),Input (w/o Cache Write),Cache Read,Output Tokens,Total Tokens,Cost\n\
+                          2024-01-01T10:00:00Z,Included,auto,No,invalid,50,25,75,250,0.05";
+        
+        let result = parser.parse_csv(&csv_content);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("Invalid Input (w/ Cache Write) value"));
+    }
+
+    #[test]
+    fn test_parse_invalid_max_mode() {
+        let parser = CsvParser::new();
+        let csv_content = "Date,Kind,Model,Max Mode,Input (w/ Cache Write),Input (w/o Cache Write),Cache Read,Output Tokens,Total Tokens,Cost\n\
+                          2024-01-01T10:00:00Z,Included,auto,Maybe,100,50,25,75,250,0.05";
+        
+        let result = parser.parse_csv(&csv_content);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("Invalid Max Mode value"));
+    }
+
+    #[test]
+    fn test_parse_wrong_column_count() {
+        let parser = CsvParser::new();
+        let csv_content = "Date,Kind,Model,Max Mode,Input (w/ Cache Write),Input (w/o Cache Write),Cache Read,Output Tokens,Total Tokens,Cost\n\
+                          2024-01-01T10:00:00Z,Included,auto,No,100,50,25,75";
+        
+        let result = parser.parse_csv(&csv_content);
+        assert!(result.is_err());
+        let error_msg = result.unwrap_err();
+        // The CSV library returns different error messages, so we check for various possibilities
+        assert!(error_msg.contains("found record with 8 fields") || 
+                error_msg.contains("Invalid number of columns") || 
+                error_msg.contains("Expected 10, found"));
+    }
+
+    #[test]
+    fn test_validate_csv_format_success() {
+        let parser = CsvParser::new();
+        let csv_content = create_valid_csv();
+        
+        let result = parser.validate_csv_format(&csv_content);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_validate_csv_format_empty() {
+        let parser = CsvParser::new();
+        let result = parser.validate_csv_format("");
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("CSV file is empty"));
+    }
+
+    #[test]
+    fn test_validate_csv_format_wrong_header_count() {
+        let parser = CsvParser::new();
+        let csv_content = "Date,Kind,Model\n2024-01-01,Included,auto";
+        
+        let result = parser.validate_csv_format(&csv_content);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("Invalid number of columns in header"));
+    }
+}

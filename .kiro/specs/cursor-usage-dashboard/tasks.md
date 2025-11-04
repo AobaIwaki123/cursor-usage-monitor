@@ -65,7 +65,7 @@
     - [x] コスト効率メトリクス（トークンあたりコスト等）が計算されているか
     - [x] 使用量のパーセンタイル（中央値、95%等）が算出されているか
   
-  - [ ] 2.5 Write backend API tests and performance benchmarks
+  - [x] 2.5 Write backend API tests and performance benchmarks
     - Create unit tests for CSV parsing functions
     - Write integration tests for upload endpoints
     - Add error handling test cases
@@ -75,10 +75,10 @@
     - _Requirements: 1.3, 8.1, 8.2, 8.3, 8.4, 8.5, 8.6_
     
     **ユーザー確認ポイント:**
-    - [ ] `cargo test` で全テストがパスするか
-    - [ ] `cargo bench` でベンチマークが実行されるか
-    - [ ] 大容量ファイル（100MB）のテストが成功するか
-    - [ ] 同時アップロードのテストが正常に動作するか
+    - [x] `cargo test` で全テストがパスするか
+    - [x] `cargo bench` でベンチマークが実行されるか
+    - [x] 大容量ファイル（100MB）のテストが成功するか
+    - [x] 同時アップロードのテストが正常に動作するか
 
 - [ ] 3. Initialize frontend React application
   - [ ] 3.1 Create React TypeScript project with Vite

@@ -3,6 +3,7 @@
         "docker-compose build *",
         "docker-compose up *",
         "docker-compose exec *",
+        "docker compose exec *",
         "curl *",
         "docker-compose ps",
         "docker-compose config"
