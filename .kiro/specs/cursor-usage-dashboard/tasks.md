@@ -95,7 +95,7 @@
     - [x] TypeScriptのコンパイルエラーがないか
     - [x] Tailwind CSSのスタイルが適用されるか
   
-  - [ ] 3.2 Create shared TypeScript interfaces and API routes
+  - [x] 3.2 Create shared TypeScript interfaces and API routes
     - Define UsageData, UsageSummary, and ModelStats interfaces in app/types
     - Create API response types and error handling types
     - Set up type definitions for chart data structures
@@ -108,7 +108,7 @@
     - [ ] Next.js API routesが正しく設定されているか
     - [ ] 型安全性が保たれているか（コンパイルエラーなし）
   
-  - [ ] 3.3 Implement file upload client component
+  - [x] 3.3 Implement file upload client component
     - Create FileUpload client component ('use client') with drag-and-drop functionality
     - Add file validation (CSV format, size limits)
     - Implement upload progress and error state handling
@@ -121,7 +121,7 @@
     - [ ] CSV以外のファイルで適切なエラーが表示されるか
     - [ ] アップロード進行状況が表示されるか
 
-- [ ] 4. Implement data visualization client components with enhanced features
+- [-] 4. Implement data visualization client components with enhanced features
   - [ ] 4.1 Create token usage time-series chart with granularity controls
     - Install and configure Recharts library (`docker compose exec view bun add recharts`)
     - Implement TokenUsageChart client component ('use client') with line chart
