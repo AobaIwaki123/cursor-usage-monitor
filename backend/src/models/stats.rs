@@ -29,3 +29,10 @@ pub struct UsagePercentiles {
     pub p95: u32,
     pub p99: u32,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ComprehensiveStats {
+    pub peak_usage: PeakUsageStats,
+    pub cost_efficiency: CostEfficiencyStats,
+    pub usage_trends: UsageTrendStats,
+}

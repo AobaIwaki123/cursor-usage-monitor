@@ -52,7 +52,7 @@
     - [x] モデル別の統計が適切に分類されているか
     - [x] キャッシュ効率が正しく計算されているか
   
-  - [ ] 2.4 Implement comprehensive statistics calculation
+  - [x] 2.4 Implement comprehensive statistics calculation
     - Create services for peak usage analysis (hours, days)
     - Implement cost efficiency metrics calculation
     - Add usage trend analysis and growth rate calculation
@@ -60,10 +60,10 @@
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
     
     **ユーザー確認ポイント:**
-    - [ ] `/api/stats/comprehensive` エンドポイントが正常に応答するか
-    - [ ] ピーク使用時間・日付が正しく特定されているか
-    - [ ] コスト効率メトリクス（トークンあたりコスト等）が計算されているか
-    - [ ] 使用量のパーセンタイル（中央値、95%等）が算出されているか
+    - [x] `/api/stats/comprehensive` エンドポイントが正常に応答するか
+    - [x] ピーク使用時間・日付が正しく特定されているか
+    - [x] コスト効率メトリクス（トークンあたりコスト等）が計算されているか
+    - [x] 使用量のパーセンタイル（中央値、95%等）が算出されているか
   
   - [ ] 2.5 Write backend API tests and performance benchmarks
     - Create unit tests for CSV parsing functions
