@@ -26,7 +26,7 @@
     - [x] `GET /api/health` エンドポイントが応答するか
     - [x] CORS設定でフロントエンドからのリクエストが通るか
   
-  - [ ] 2.2 Implement CSV upload and parsing endpoints
+  - [x] 2.2 Implement CSV upload and parsing endpoints
     - Create POST /api/upload endpoint with multipart file handling
     - Create POST /api/upload/append endpoint for merging new data
     - Implement CSV parsing logic with comprehensive validation
@@ -34,10 +34,10 @@
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 6.1, 6.2, 6.3_
     
     **ユーザー確認ポイント:**
-    - [ ] example.csvファイルが正常にアップロード・解析されるか
-    - [ ] 無効なCSVファイルで適切なエラーメッセージが返されるか
-    - [ ] ファイルサイズ制限（100MB）が正しく動作するか
-    - [ ] `/api/upload/append` で既存データにマージできるか
+    - [x] example.csvファイルが正常にアップロード・解析されるか
+    - [x] 無効なCSVファイルで適切なエラーメッセージが返されるか
+    - [x] ファイルサイズ制限（100MB）が正しく動作するか
+    - [x] `/api/upload/append` で既存データにマージできるか
   
   - [ ] 2.3 Create data processing and summary calculation services
     - Implement UsageData struct and parsing logic
