@@ -121,8 +121,8 @@
     - [ ] CSV以外のファイルで適切なエラーが表示されるか
     - [ ] アップロード進行状況が表示されるか
 
-- [-] 4. Implement data visualization client components with enhanced features
-  - [ ] 4.1 Create token usage time-series chart with granularity controls
+- [x] 4. Implement data visualization client components with enhanced features
+  - [x] 4.1 Create token usage time-series chart with granularity controls
     - Install and configure Recharts library (`docker compose exec view bun add recharts`)
     - Implement TokenUsageChart client component ('use client') with line chart
     - Add daily/hourly granularity toggle functionality
@@ -136,7 +136,7 @@
     - [ ] ホバー時に詳細情報が表示されるか
     - [ ] 日付範囲フィルターが正常に機能するか
   
-  - [ ] 4.2 Create cost breakdown visualization with model filtering
+  - [x] 4.2 Create cost breakdown visualization with model filtering
     - Implement CostBreakdownChart client component ('use client') with pie chart for model costs
     - Add toggle between individual model view and aggregated overall view
     - Create daily cost trends line chart
@@ -149,7 +149,7 @@
     - [ ] 日別コストトレンドが正しく描画されるか
     - [ ] コストサマリーカードに正確な数値が表示されるか
   
-  - [ ] 4.3 Create model usage statistics display with advanced filtering
+  - [x] 4.3 Create model usage statistics display with advanced filtering
     - Implement ModelStatsTable client component ('use client') with sorting and filtering
     - Add model usage frequency bar chart
     - Implement toggle between individual model and aggregated views
@@ -162,7 +162,7 @@
     - [ ] 個別・集約表示の切り替えが正常に機能するか
     - [ ] キャッシュ効率メトリクスが正確に表示されるか
   
-  - [ ] 4.4 Create comprehensive statistics dashboard
+  - [x] 4.4 Create comprehensive statistics dashboard
     - Implement client component ('use client') for peak usage hours and days visualization
     - Create cost efficiency metrics display (cost per token, per request)
     - Add usage trends visualization with growth rate indicators

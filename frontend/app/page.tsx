@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 import FileUpload from './components/FileUpload';
+import TokenUsageChart from './components/TokenUsageChart';
+import CostBreakdownChart from './components/CostBreakdownChart';
+import ModelStatsTable from './components/ModelStatsTable';
+import ComprehensiveStats from './components/ComprehensiveStats';
 import type { UploadResponse, UsageData } from './types';
 
 export default function Home() {
@@ -25,20 +29,17 @@ export default function Home() {
           </p>
         </header>
 
-        <div className="max-w-2xl mx-auto">
-          <FileUpload onFileUpload={handleFileUpload} isLoading={isLoading} />
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <FileUpload onFileUpload={handleFileUpload} isLoading={isLoading} />
+          </div>
 
           {uploadedData && (
-            <div className="mt-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                Upload Successful
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Loaded {uploadedData.length} records
-              </p>
-              <div className="mt-4 text-sm text-gray-500 dark:text-gray-500">
-                Visualization components will be added in the next tasks
-              </div>
+            <div className="space-y-8">
+              <TokenUsageChart data={uploadedData} />
+              <CostBreakdownChart data={uploadedData} />
+              <ModelStatsTable data={uploadedData} />
+              <ComprehensiveStats data={uploadedData} />
             </div>
           )}
         </div>
