@@ -11,12 +11,18 @@ RUN cargo install cargo-watch
 # Copy Cargo files first for better caching
 COPY Cargo.toml ./
 
-# Create a dummy main.rs to build dependencies
-RUN mkdir src && echo "fn main() {}" > src/main.rs
+# Create dummy lib.rs (since this is a library crate)
+RUN mkdir -p src && echo "// dummy" > src/lib.rs
+
+# Create benches directory structure to satisfy Cargo.toml
+RUN mkdir -p benches && \
+    echo "fn main() {}" > benches/csv_parsing.rs && \
+    echo "fn main() {}" > benches/stats_calculation.rs && \
+    echo "fn main() {}" > benches/api_endpoints.rs
 
 # Build dependencies
 RUN cargo build --release
-RUN rm src/main.rs
+RUN rm -rf src benches
 
 # Copy source code
 COPY . .
