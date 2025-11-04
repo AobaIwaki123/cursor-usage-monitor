@@ -8,7 +8,7 @@ function App() {
       <h1>Cursor Usage Dashboard</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+          Hello, count is {count}
         </button>
         <p>
           Frontend is running! Backend health check coming soon.

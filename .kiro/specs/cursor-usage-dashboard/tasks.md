@@ -11,7 +11,7 @@
   - [x] プロジェクトフォルダ構造が正しく作成されているか
   - [x] `docker-compose up --build` でエラーなく起動するか
   - [x] フロントエンド (http://localhost:3000) とバックエンド (http://localhost:3001) にアクセス可能か
-  - [ ] ファイル変更時にホットリロードが動作するか
+  - [x] ファイル変更時にホットリロードが動作するか
 
 - [ ] 2. Initialize Rust backend API server
   - [ ] 2.1 Create Rust Axum server project
