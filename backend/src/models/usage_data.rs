@@ -32,7 +32,8 @@ pub struct ModelStats {
     pub total_tokens: u32,
     pub total_cost: f64,
     pub average_tokens_per_request: f64,
-    pub cache_efficiency: f64,
+    pub cache_hit_rate: f64, // percentage (0-100), calculated as cache_read / total_input * 100
+    pub cache_savings: f64, // monetary savings from cache usage
 }
 
 #[derive(Debug, Serialize, Deserialize)]

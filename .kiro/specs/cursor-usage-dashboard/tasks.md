@@ -52,7 +52,7 @@
     - [x] モデル別の統計が適切に分類されているか
     - [x] キャッシュ効率が正しく計算されているか
   
-  - [ ] 2.6 Fix cache efficiency calculation and add date filtering support
+  - [x] 2.6 Fix cache efficiency calculation and add date filtering support
     - Update cache efficiency calculation to: (cache_read / total_input) × 100, capped at 100%
     - Rename cache_efficiency field to cache_hit_rate in ModelStats struct
     - Add cache_savings field to calculate monetary savings from cache usage

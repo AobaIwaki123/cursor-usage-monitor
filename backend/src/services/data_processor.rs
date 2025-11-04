@@ -81,8 +81,8 @@ impl DataProcessor {
                 0.0
             };
 
-            // Calculate cache efficiency
-            let cache_efficiency = self.calculate_cache_efficiency(model_usage);
+            // Calculate cache hit rate and savings
+            let (cache_hit_rate, cache_savings) = self.calculate_cache_metrics(&model_usage);
 
             stats.push(ModelStats {
                 model,
@@ -90,7 +90,8 @@ impl DataProcessor {
                 total_tokens,
                 total_cost,
                 average_tokens_per_request,
-                cache_efficiency,
+                cache_hit_rate,
+                cache_savings,
             });
         }
 
@@ -99,8 +100,9 @@ impl DataProcessor {
         stats
     }
 
-    /// Calculate cache efficiency as percentage of cache hits
-    fn calculate_cache_efficiency(&self, model_usage: Vec<&UsageData>) -> f64 {
+    /// Calculate cache hit rate and monetary savings
+    /// Requirements: 5.5, 5.6, 7.4, 7.5
+    fn calculate_cache_metrics(&self, model_usage: &[&UsageData]) -> (f64, f64) {
         let total_input_tokens: u32 = model_usage.iter()
             .map(|u| u.input_with_cache + u.input_without_cache)
             .sum();
@@ -109,12 +111,29 @@ impl DataProcessor {
             .map(|u| u.cache_read)
             .sum();
 
-        if total_input_tokens + total_cache_read == 0 {
-            return 0.0;
-        }
+        // Calculate cache hit rate: (cache_read / total_input) * 100, capped at 100%
+        let cache_hit_rate = if total_input_tokens > 0 {
+            let rate = (total_cache_read as f64 / total_input_tokens as f64) * 100.0;
+            rate.min(100.0) // Cap at 100%
+        } else {
+            0.0
+        };
 
-        // Cache efficiency = cache_read / (total_input + cache_read) * 100
-        (total_cache_read as f64 / (total_input_tokens + total_cache_read) as f64) * 100.0
+        // Calculate cache savings in monetary terms
+        // Estimate: if cache_read tokens were not cached, they would have cost proportionally
+        let total_cost: f64 = model_usage.iter().map(|u| u.cost).sum();
+        let total_tokens: u32 = model_usage.iter().map(|u| u.total_tokens).sum();
+        
+        let cache_savings = if total_tokens > 0 && total_cache_read > 0 {
+            // Estimate cost per token and calculate savings
+            let cost_per_token = total_cost / total_tokens as f64;
+            // Assume cached tokens would have cost the same as input tokens
+            cost_per_token * total_cache_read as f64
+        } else {
+            0.0
+        };
+
+        (cache_hit_rate, cache_savings)
     }
 
     /// Merge existing data with new data, removing duplicates and sorting by date
