@@ -11,7 +11,7 @@ use tower_http::cors::CorsLayer;
 #[tokio::main]
 async fn main() {
     // Initialize tracing
-    tracing_subscriber::init();
+    tracing_subscriber::fmt().init();
 
     // Build our application with a route
     let app = Router::new()

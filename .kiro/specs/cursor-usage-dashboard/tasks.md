@@ -1,6 +1,6 @@
 # Implementation Plan
 
-- [ ] 1. Set up project structure and Docker environment
+- [x] 1. Set up project structure and Docker environment
   - Create root directory structure with frontend, backend, and shared folders
   - Create docker-compose.yml with frontend (React) and backend (Rust) services
   - Set up volume mounting for hot reload development
@@ -8,9 +8,9 @@
   - _Requirements: 4.1, 4.2, 4.3_
   
   **ユーザー確認ポイント:**
-  - [ ] プロジェクトフォルダ構造が正しく作成されているか
-  - [ ] `docker-compose up --build` でエラーなく起動するか
-  - [ ] フロントエンド (http://localhost:3000) とバックエンド (http://localhost:3001) にアクセス可能か
+  - [x] プロジェクトフォルダ構造が正しく作成されているか
+  - [x] `docker-compose up --build` でエラーなく起動するか
+  - [x] フロントエンド (http://localhost:3000) とバックエンド (http://localhost:3001) にアクセス可能か
   - [ ] ファイル変更時にホットリロードが動作するか
 
 - [ ] 2. Initialize Rust backend API server
